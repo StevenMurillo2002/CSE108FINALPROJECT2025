@@ -108,6 +108,60 @@ def login():
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/creategame')
+@login_required
+
+def creategame():
+    newgame = Game(host_id = current_user.id, round_num = 1, active = True)
+    # create a new game with the host being the current user who just clicked create game
+    db.session.add(newgame)
+    db.session.commit()
+
+    gamehost = PlayerGame(game_id = newgame.id, user_id = current_user.id, score=0)
+    # add the user to the game setting the game id and the user id to the current user, also setting their score to be 0
+    db.session.add(gamehost)
+    db.session.commit()
+
+    return redirect(url_for('lobby', game_id = newgame.id))
+    # put user into the lobby until the user is ready to start the game
+
+@app.route('/gamelobby/<int:game_id>')
+@login_required
+def lobby(game_id):
+    return render_template('gamelobby.html', game_id = game_id)
+
+
+@app.route('/joingame', methods=['POST'])
+@login_required
+def joingamepost():
+    game_id = request.form.get('game_id')
+    # grab the room code from the user
+    return redirect(url_for('joingame', game_id = game_id))
+
+@app.route('/joingame/<int:game_id>')
+@login_required
+def joingame(game_id):
+    game = Game.query.get(game_id)
+    # set the game equal to the game id 
+
+    if not game:
+        flash('Error: Game has not been found try again', 'alert')
+        return redirect(url_for('dashboard'))
+    # check to see if the lobby for the game exists 
+
+
+    newplayer = PlayerGame(game_id = game_id, user_id = current_user.id, score = 0)
+    # create a new player by adding them to the game lobby and set the score = 0
+    db.session.add(newplayer)
+    db.session.commit()
+
+    return redirect(url_for('lobby', game_id = game_id))
+
+
+
+
+
+
 
 
 if __name__ == '__main__':

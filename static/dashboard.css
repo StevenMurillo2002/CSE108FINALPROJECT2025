@@ -1,0 +1,32 @@
+body{
+    margin:0;
+    padding: 0;
+    background-color: rgb(240, 216, 181);
+}
+
+h1{
+    display:flex;
+    justify-content: center;
+    font-size: 100px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin-bottom: 10%;
+}
+
+.createroom{
+    display: inline-flex;
+    justify-content: center;
+    font-size: 100px;
+    margin-bottom: 30px;
+    margin-left: 32%;
+}
+
+.joinroom{
+    display: inline-flex;
+    justify-content: center;
+    font-size: 100px;
+    margin-left: 5%;
+}
+
+button{
+    font-size: 50px;
+}
