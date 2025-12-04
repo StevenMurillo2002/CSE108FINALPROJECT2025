@@ -125,10 +125,18 @@ def creategame():
     return redirect(url_for('lobby', game_id = newgame.id))
     # put user into the lobby until the user is ready to start the game
 
+
+
 @app.route('/gamelobby/<int:game_id>')
 @login_required
 def lobby(game_id):
-    return render_template('gamelobby.html', game_id = game_id)
+    allplayers = (
+    User.query
+        .join(PlayerGame, PlayerGame.user_id == User.id)
+        .filter(PlayerGame.game_id == game_id)
+        .all()
+    )
+    return render_template('gamelobby.html', game_id = game_id, allplayers=allplayers)
 
 
 @app.route('/joingame', methods=['POST'])
@@ -156,6 +164,40 @@ def joingame(game_id):
     db.session.commit()
 
     return redirect(url_for('lobby', game_id = game_id))
+
+
+@app.route('/startgame/<int:game_id>')
+@login_required
+
+def startgame(game_id):
+    game = Game.query.get(game_id)
+
+    if not game:
+        flash("Error: Your game was not found", "alert")
+        return redirect(url_for("dashboard"))
+    
+    from random import sample
+    ingredientslist = Ingredients.query.all()
+    pickingredient = sample(ingredientslist, 3)
+    ingredientpicked = ", ".join([i.name for i in pickingredient])
+
+    round = GameRound(game_id = game_id, ingredients = ingredientpicked, phase = "submit")
+
+    db.session.add(round)
+    db.session.commit()
+
+    return redirect(url_for('actualgame', game_id = game_id, round_id = round.id))
+
+@app.route('/game/<int:game_id>/<int:round_id>')
+@login_required
+
+def actualgame(game_id, round_id):
+    round = GameRound.query.get(round_id)
+
+    return render_template('actualgame.html', game_id = game_id, round=round)
+    
+
+
 
 
 

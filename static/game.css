@@ -15,8 +15,14 @@ body{
     justify-content: center;
     justify-items: center;
     margin-left: 10%;
+
+    margin-bottom: 10%;
 }
 
 h1{
     color: black;
+}
+
+.answerbox{
+    text-align: center;
 }
