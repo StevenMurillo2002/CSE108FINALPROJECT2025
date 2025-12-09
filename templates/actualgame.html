@@ -17,7 +17,7 @@
     </div>
 
     <div class="answerbox">
-      <form action="/submitanswer/{{round.id}}" method="POST">
+      <form action="{{url_for('submitanswer', game_id = game_id, round_id = round.id)}}" method="POST">
         <input type="text" name="answer" placeholder="Enter dish: ">
         <button type="submit">Submit</button>
     </form>

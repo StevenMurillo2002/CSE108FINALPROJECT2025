@@ -21,9 +21,11 @@
     </div>
 
     <div class="startbutton">
-        <a href="{{url_for('startgame', game_id = game_id)}}">
-            <button>Start Game</button>
-        </a>
+        {% if current_user.id == host_id %}
+            <a href="{{url_for('startgame', game_id = game_id)}}">
+                <button>Start Game</button>
+            </a>
+        {% endif %}    
     </div>
 
     <script>

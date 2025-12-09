@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waiting Lobby</title>
+</head>
+<body>
+    <h1> Waiting on players to finish submissions...</h1>
+    <p> {{ responses | length}} / {{players | length}} submissions entered</p>
+
+    <h3>Players who submitted:</h3>
+    <ul>
+        {% for r in responses %}
+        <li>
+            {{r.round.username}}
+        </li>
+        {% endfor %}
+    </ul>
+    
+</body>
+</html>

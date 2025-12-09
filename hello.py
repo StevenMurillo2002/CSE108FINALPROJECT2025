@@ -69,7 +69,7 @@ def load_user(user_id):
 
 
 from flask_admin.contrib.sqla import ModelView
-app.secret_key = 'super secret key'
+
 
 admin = Admin(app, name='Admin View')
 admin.add_view(ModelView(User,db.session))
@@ -130,13 +130,21 @@ def creategame():
 @app.route('/gamelobby/<int:game_id>')
 @login_required
 def lobby(game_id):
+
+    round_started = GameRound.query.filter_by(game_id = game_id).first()
+
+    if round_started:
+        return redirect(url_for("actualgame", game_id = game_id, round_id = round_started.id))
+
+    game = Game.query.get(game_id)
+
     allplayers = (
     User.query
         .join(PlayerGame, PlayerGame.user_id == User.id)
         .filter(PlayerGame.game_id == game_id)
         .all()
     )
-    return render_template('gamelobby.html', game_id = game_id, allplayers=allplayers)
+    return render_template('gamelobby.html', game_id = game_id, allplayers=allplayers, host_id = game.host_id)
 
 
 @app.route('/joingame', methods=['POST'])
@@ -152,10 +160,22 @@ def joingame(game_id):
     game = Game.query.get(game_id)
     # set the game equal to the game id 
 
+
     if not game:
         flash('Error: Game has not been found try again', 'alert')
         return redirect(url_for('dashboard'))
     # check to see if the lobby for the game exists 
+
+    repeatplayer = PlayerGame.query.filter_by(game_id = game_id, user_id = current_user.id).first()
+    if repeatplayer:
+        flash("YOU ARE ALREADY IN THE GAME!!!!!!", 'alert')
+        return redirect(url_for('dashboard'))
+
+    limitplayers = PlayerGame.query.filter_by(game_id = game_id).all()
+    if len(limitplayers) >= 4:
+        flash("THIS GAME IS FULL LIL BRO", "alert")
+        return redirect(url_for('dashboard'))
+    
 
 
     newplayer = PlayerGame(game_id = game_id, user_id = current_user.id, score = 0)
@@ -172,9 +192,14 @@ def joingame(game_id):
 def startgame(game_id):
     game = Game.query.get(game_id)
 
+
     if not game:
         flash("Error: Your game was not found", "alert")
         return redirect(url_for("dashboard"))
+
+    if current_user.id != game.host_id:
+        flash("Only host can start game !!", "alert")
+        return redirect(url_for('lobby', game_id=game_id))
     
     from random import sample
     ingredientslist = Ingredients.query.all()
@@ -204,7 +229,43 @@ def actualgame(game_id, round_id):
 
 
 
+@app.route('/submitanswer/<int:game_id>/<int:round_id>', methods=["POST"])
+@login_required
 
+def submitanswer(game_id, round_id):
+    answer = request.form.get('answer')
+
+    new_answers = Responses(round_id = round_id, user_id = current_user.id, text = answer, votes = 0)
+    db.session.add(new_answers)
+    db.session.commit()     
+
+    return redirect(url_for('votingwait', game_id = game_id, round_id = round_id))
+
+
+@app.route('/votingwait/<int:game_id>/<int:round_id>')
+@login_required
+
+def votingwait(game_id, round_id):
+    round = GameRound.query.get(round_id)
+
+    responses = Responses.query.filter_by(round_id = round_id).all()
+
+    players = PlayerGame.query.filter_by(game_id = game_id).all()
+
+    if len(responses) == len(players):
+        return redirect(url_for('voting', game_id = game_id, round_id = round_id))
+
+    return render_template('votingwait.html', game_id = game_id, round_id = round_id, responses = responses, players = players)
+
+
+@app.route('/voting/<int:game_id>/<int:round_id>')
+@login_required
+
+def voting(game_id, round_id):
+    round = GameRound.query.get(round_id)
+    responses = Responses.query.filter_by(round_id = round_id).all()
+
+    return render_template('voting.html', game_id = game_id, round_id = round_id, responses = responses)
 
 if __name__ == '__main__':
     app.run(debug=True)
