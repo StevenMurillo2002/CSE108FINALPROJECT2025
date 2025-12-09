@@ -222,13 +222,6 @@ def actualgame(game_id, round_id):
     return render_template('actualgame.html', game_id = game_id, round=round)
     
 
-
-
-
-
-
-
-
 @app.route('/submitanswer/<int:game_id>/<int:round_id>', methods=["POST"])
 @login_required
 
