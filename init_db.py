@@ -88,7 +88,7 @@ with app.app_context():
     db.session.add(Tortilla)
     db.session.commit()
 
-    ChowMein = Ingredients(name = "Chow Mein", category = "Extra")
+    Noodles = Ingredients(name = "Noodles", category = "Extra")
     db.session.add(ChowMein)
     db.session.commit()
 
