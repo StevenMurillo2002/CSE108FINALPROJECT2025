@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="/static/lobby.css">
 </head>
 <body>
+    <nav class="top-nav">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
+    </nav>
     
     <div class="lobbybox">
         <h1> Lobby: # {{game_id}}</h1>
