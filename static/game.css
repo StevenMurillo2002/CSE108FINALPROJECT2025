@@ -26,3 +26,28 @@ h1{
 .answerbox{
     text-align: center;
 }
+
+.flashes { 
+    list-style: none; padding: 0; 
+}
+
+.flashes li { 
+    margin: 0.5em 0; 
+    padding: 0.8em 1.2em; 
+    border-radius: 5px; 
+}
+
+.success { 
+    background: #d4f9d4; 
+    color: #228b22; 
+}
+
+.warning { 
+    background: #fff4e5; 
+    color: #884700; 
+}
+
+.alert  { 
+    background: #fee2e2; 
+    color: #a70000; 
+}

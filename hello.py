@@ -130,7 +130,7 @@ def signup():
         db.session.add(user)
         db.session.commit()
 
-        flash('Account created! Please log in.', 'info')
+        flash('Account created! Please log in.', 'success')
         return redirect(url_for('login'))
     
     return render_template('signup.html')
@@ -139,7 +139,7 @@ def signup():
 @login_required
 def logout():
     logout_user()
-    flash("You have been logged out.", 'info')
+    flash("You have been logged out.", 'success')
     return redirect(url_for('login'))
 
 @app.route('/dashboard')
