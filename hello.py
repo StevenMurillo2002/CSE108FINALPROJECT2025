@@ -169,22 +169,35 @@ def creategame():
 @app.route('/gamelobby/<int:game_id>')
 @login_required
 def lobby(game_id):
-
-    round_started = GameRound.query.filter_by(game_id = game_id).first()
-
-    if round_started:
-        return redirect(url_for("actualgame", game_id = game_id, round_id = round_started.id))
-
+    # 1) Make sure the game still exists
     game = Game.query.get(game_id)
-
+    if not game:
+        return redirect(url_for('dashboard'))
+    # 2) Make sure THIS user still belongs to this game (not kicked)
+    pg = PlayerGame.query.filter_by(game_id=game_id, user_id=current_user.id).first()
+    if not pg:
+        return redirect(url_for('dashboard'))
+    # 3) If a round has already started, send everyone to the game screen
+    round_started = GameRound.query.filter_by(game_id=game_id).first()
+    if round_started:
+        return redirect(url_for(
+            "actualgame",
+            game_id=game_id,
+            round_id=round_started.id
+        ))
+    # 4) Otherwise, still in lobby – show players list
     allplayers = (
-    User.query
-        .join(PlayerGame, PlayerGame.user_id == User.id)
-        .filter(PlayerGame.game_id == game_id)
-        .all()
+        User.query
+            .join(PlayerGame, PlayerGame.user_id == User.id)
+            .filter(PlayerGame.game_id == game_id)
+            .all()
     )
-    return render_template('gamelobby.html', game_id = game_id, allplayers=allplayers, host_id = game.host_id)
-
+    return render_template(
+        'gamelobby.html',
+        game_id=game_id,
+        allplayers=allplayers,
+        host_id=game.host_id
+    )
 
 @app.route('/joingame', methods=['POST'])
 @login_required
@@ -224,6 +237,68 @@ def joingame(game_id):
 
     return redirect(url_for('lobby', game_id = game_id))
 
+@app.route('/leavegame/<int:game_id>')
+@login_required
+def leavegame(game_id):
+    game = Game.query.get(game_id)
+    if game is None:
+        flash("Game not found.", "alert")
+        return redirect(url_for('dashboard'))
+
+    # Remove this user from the game if they’re in it
+    pg = PlayerGame.query.filter_by(game_id=game_id, user_id=current_user.id).first()
+    if pg is not None:
+        db.session.delete(pg)
+
+    # If THIS user is the host, delete the whole game & related data
+    if current_user.id == game.host_id:
+        rounds = GameRound.query.filter_by(game_id=game_id).all()
+        for r in rounds:
+            Responses.query.filter_by(round_id=r.id).delete()
+
+        GameRound.query.filter_by(game_id=game_id).delete()
+        PlayerGame.query.filter_by(game_id=game_id).delete()
+        db.session.delete(game)
+
+        db.session.commit()
+        return redirect(url_for('dashboard'))
+
+    # Non-host leaving
+    remaining = PlayerGame.query.filter_by(game_id=game_id).count()
+    if remaining == 0:
+        # No players left → clean up whole game
+        rounds = GameRound.query.filter_by(game_id=game_id).all()
+        for r in rounds:
+            Responses.query.filter_by(round_id=r.id).delete()
+        GameRound.query.filter_by(game_id=game_id).delete()
+        db.session.delete(game)
+
+    db.session.commit()
+    return redirect(url_for('dashboard'))
+
+@app.route('/kickplayer/<int:game_id>/<int:user_id>')
+@login_required
+def kickplayer(game_id, user_id):
+    game = Game.query.get(game_id)
+    if not game:
+        return redirect(url_for('dashboard'))
+
+    # Only the host is allowed to kick
+    if current_user.id != game.host_id:
+        return redirect(url_for('lobby', game_id=game_id))
+
+    # Don't allow host to kick themselves
+    if user_id == game.host_id:
+        return redirect(url_for('lobby', game_id=game_id))
+
+    pg = PlayerGame.query.filter_by(game_id=game_id, user_id=user_id).first()
+    if not pg:
+        return redirect(url_for('lobby', game_id=game_id))
+
+    db.session.delete(pg)
+    db.session.commit()
+    return redirect(url_for('lobby', game_id=game_id))
+
 
 @app.route('/startgame/<int:game_id>')
 @login_required
@@ -254,11 +329,25 @@ def startgame(game_id):
 
 @app.route('/game/<int:game_id>/<int:round_id>')
 @login_required
-
 def actualgame(game_id, round_id):
-    round = GameRound.query.get(round_id)
-
-    return render_template('actualgame.html', game_id = game_id, round=round)
+    # Make sure the game still exists
+    game = Game.query.get(game_id)
+    if not game:
+        flash("This game no longer exists.", "warning")
+        return redirect(url_for('dashboard'))
+    # Make sure this user is still in the game (not kicked / left)
+    pg = PlayerGame.query.filter_by(game_id=game_id, user_id=current_user.id).first()
+    if not pg:
+        flash("You are no longer in this game.", "warning")
+        return redirect(url_for('dashboard'))
+    # Get the round
+    round_obj = GameRound.query.get_or_404(round_id)
+    # Just pass the round; template already uses round.ingredients
+    return render_template(
+        'actualgame.html',
+        game_id=game_id,
+        round=round_obj
+    )
     
 
 @app.route('/submitanswer/<int:game_id>/<int:round_id>', methods=["POST"])
