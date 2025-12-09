@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
 
-    def password(self,password):
+    def set_password(self,password):
         self.password_hash = generate_password_hash(password)
 
     def verify(self, password):
@@ -102,6 +102,38 @@ def login():
             login_user(user)
             return redirect(url_for('dashboard'))
     return render_template('login.html')
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+     # If already logged in, skip signup
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    if request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        # Basic validation
+        if not username or not password:
+            flash("Username and password are required.", "alert")
+            return redirect(url_for('signup'))
+        
+        # Check if username is taken
+        existing = User.query.filter_by(username=username).first()
+        if existing:
+            flash('Username already taken, choose another.', 'alert')
+            return redirect(url_for('signup'))
+        
+        # Create user with hashed and salted password
+        user = User(username=username)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        flash('Account created! Please log in.', 'info')
+        return redirect(url_for('login'))
+    
+    return render_template('signup.html')
 
 @app.route('/dashboard')
 @login_required
