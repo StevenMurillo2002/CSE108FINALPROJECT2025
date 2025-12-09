@@ -7,6 +7,10 @@
 	<link rel="stylesheet" href="/static/game.css">
 </head>
 <body>
+	{% extends "base.html" %}
+    {% block title %}Pantry Panic!{% endblock %}
+    {% block content %}
+
 	<nav class="top-nav">
 		<a href="{{ url_for('dashboard') }}">Dashboard</a>
 		<a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
@@ -27,5 +31,6 @@
 			<button type="submit">Submit</button>
 	</form>
 	</div>
+	{% endblock %}
 </body>
 </html>
