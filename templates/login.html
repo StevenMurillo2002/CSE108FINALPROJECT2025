@@ -6,6 +6,10 @@
     </head>
 
     <body>
+        {% extends "base.html" %}
+        {% block title %}Login{% endblock %}
+        {% block content %}
+
         <img class="logo" src="/static/pantrypaniclogo.png">
         <div class="container">
             <div class="login-text">
@@ -27,6 +31,8 @@
                 <button class="login-button" type="submit"> Log In</button>
             </form>
             
+            <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
         </div>
+        {% endblock %}
     </body>
 </html>
