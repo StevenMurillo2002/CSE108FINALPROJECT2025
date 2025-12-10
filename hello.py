@@ -62,6 +62,7 @@ class Responses(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     text = db.Column(db.String(256))
     votes = db.Column(db.Integer, default=0)
+    user = db.relationship("User")
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -388,5 +389,88 @@ def voting(game_id, round_id):
 
     return render_template('voting.html', game_id = game_id, round_id = round_id, responses = responses)
 
+
+@app.route('/addvote/<int:game_id>/<int:round_id>/<int:response_id>', methods = ["POST"])
+@login_required
+def addvote(game_id, round_id, response_id):
+    vote = Responses.query.get(response_id)
+    if vote.user_id == current_user.id:
+        flash("You cannot vote for your own answer!!", "alert")
+        return redirect(url_for('voting', game_id = game_id, round_id = round_id))
+    
+    vote.votes += 1
+    db.session.commit()
+
+    player = PlayerGame.query.filter_by(game_id = game_id, user_id = vote.user_id).first()
+
+    if player:
+        player.score += 1
+    
+    db.session.commit()
+
+    return redirect(url_for('endround', game_id = game_id, round_id = round_id))
+
+
+
+@app.route('/endround/<int:game_id>/<int:round_id>')
+@login_required
+
+def endround(game_id, round_id):
+    game = Game.query.get(game_id)
+
+    if game.round_num >= 3:
+        return redirect(url_for('winner', game_id = game_id))
+    else:
+        game.round_num += 1
+    
+    from random import sample
+    ingredientslist = Ingredients.query.all()
+    pickingredient = sample(ingredientslist, 3)
+    ingredientpicked = ", ".join([i.name for i in pickingredient])
+
+    Newround = GameRound(game_id = game_id, ingredients = ingredientpicked, phase = "submit")
+
+    db.session.add(Newround)
+    db.session.commit()
+    
+    return redirect(url_for('waitround', game_id = game_id))
+
+
+@app.route('/winner/<int:game_id>')
+@login_required
+def winner(game_id):
+    players = PlayerGame.query.filter_by(game_id = game_id).all()
+
+    if not players:
+        return redirect(url_for('dashboard'))
+    
+    winner = max(players, key=lambda p:p.score)
+
+    return render_template("winner.html", winner = winner, highestscore = winner.score, players = players)
+
+@app.route('/waitround/<int:game_id>')
+@login_required
+
+def waitround(game_id):
+    game = Game.query.get(game_id)
+
+
+    if not game:
+        flash("Game was not found try again", "alert")
+        return redirect(url_for('dashboard'))
+    
+    if game.round_num > 3:
+        return redirect(url_for('winner', game_id = game_id))
+    
+    currentround = GameRound.query.filter_by(game_id = game_id).order_by(GameRound.id.desc()).first()
+    
+    if not currentround:
+        return render_template("waitround.html", game_id = game_id)
+
+
+
+    
+    return redirect(url_for('actualgame', game_id = game_id, round_id = currentround.id))
+    
 if __name__ == '__main__':
     app.run(debug=True)
