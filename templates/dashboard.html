@@ -10,7 +10,13 @@
     {% extends "base.html" %}
     {% block title %}Dashboard{% endblock %}
     {% block content %}
+
     <nav class="top-nav">
+        <div class="welcome">
+            {% if current_user.is_authenticated %}
+                <p>Welcome, {{ current_user.display_name }}!</p>
+            {% endif %}
+        </div>
         <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
     </nav>
     

@@ -6,19 +6,19 @@ with app.app_context():
     db.create_all()
 
     # Users
-    Steven = User(username = "Steven10", password_hash=generate_password_hash("Steven123"))
+    Steven = User(username = "Steven10", display_name="Steven", password_hash=generate_password_hash("Steven123"))
     db.session.add(Steven)
     db.session.commit()
 
-    Max = User(username = "Max10", password_hash=generate_password_hash("Max123"))
+    Max = User(username = "Max10", display_name="Max", password_hash=generate_password_hash("Max123"))
     db.session.add(Max)
     db.session.commit()
 
-    Ian = User(username = "Ian10", password_hash=generate_password_hash("Ian123"))
+    Ian = User(username = "Ian10", display_name="Ian", password_hash=generate_password_hash("Ian123"))
     db.session.add(Ian)
     db.session.commit()
 
-    Chris = User(username = "Chris10", password_hash=generate_password_hash("Chris123"))
+    Chris = User(username = "Chris10", display_name="Chris", password_hash=generate_password_hash("Chris123"))
     db.session.add(Chris)
     db.session.commit()
 

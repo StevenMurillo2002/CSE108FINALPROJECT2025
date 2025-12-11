@@ -12,6 +12,26 @@ h1{
     margin-bottom: 2rem;
 }
 
+.top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+}
+
+.welcome {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.logout-btn {
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    background: #ff5c5c;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
 
 .createroom,
 .joinroom {

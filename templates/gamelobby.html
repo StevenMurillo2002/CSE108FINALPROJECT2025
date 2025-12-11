@@ -11,21 +11,13 @@
 
 <div class="lobbybox">
     <h1>Lobby: #{{ game_id }}</h1>
-    <p>
-        Host:
-        {% for player in allplayers %}
-            {% if player.id == host_id %}
-                <strong>{{ player.username }}</strong>
-            {% endif %}
-        {% endfor %}
-    </p>
 </div>
 
 <div class="playlist">
     <h2>Player List</h2>
     {% for player in allplayers %}
         <p>
-            {{ player.username }}
+            {{ player.display_name }}
             {% if player.id == host_id %}
                 (Host)
             {% else %}

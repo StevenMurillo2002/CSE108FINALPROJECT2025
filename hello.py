@@ -21,6 +21,7 @@ app.secret_key = 'keep it secret, keep it safe'
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
+    display_name = db.Column(db.String(64), nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
 
     def set_password(self,password):
@@ -112,6 +113,7 @@ def signup():
     if request.method == "POST":
         username = request.form.get('username')
         password = request.form.get('password')
+        display_name = request.form.get('display_name') or username
 
         # Basic validation
         if not username or not password:
@@ -125,7 +127,7 @@ def signup():
             return redirect(url_for('signup'))
         
         # Create user with hashed and salted password
-        user = User(username=username)
+        user = User(username=username, display_name=display_name)
         user.set_password(password)
 
         db.session.add(user)
