@@ -15,22 +15,53 @@
     </nav>
     
     <h1>Main Menu</h1>
+
     <div class="mainbox">
-        <div class="createroom">
-            <a href="{{url_for('creategame')}}">
+        <div class="action-row">
+            <!-- Trigger button somewhere on the page -->
+            <button id="howtoplay-btn" class="hero-trigger">How to Play</button>
+        </div>
+        
+        <div class="action-row createroom">
+            <form action="{{ url_for('creategame') }}">
                 <button>Create Room</button>
-            </a>
+            </form>
         </div>
 
-        <div class="joinroom">
-            <form action = "{{url_for('joingamepost')}}" method="POST">
+        <div class="action-row joinroom">
+            <form action = "{{ url_for('joingamepost') }}" method="POST" class="join-pill">
                 <input type="text" name="game_id" placeholder="Room Code:">
                 <button>Join Room</button>
             </form>
-            
-             
         </div>
+
+        <!-- Hero overlay -->
+        <div id="howtoplay-overlay" class="hero-overlay">
+            <div class="hero-box">
+                <h2>How to Play</h2>
+                <p>1. Join or create a pantry room.</p>
+                <p>2. Use your ingredients to write the funniest dish idea.</p>
+                <p>3. Vote for your favorite – highest votes wins!</p>
+                <button id="close-hero">Got it!</button>
+            </div>
+        </div>
+  
     </div>
+    
+    <script>
+        const overlay = document.getElementById('howtoplay-overlay');
+        const openBtn = document.getElementById('howtoplay-btn');
+        const closeBtn = document.getElementById('close-hero');
+
+        openBtn.addEventListener('click', () => {
+        overlay.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', () => {
+        overlay.classList.remove('active');
+        });
+    </script>
+
     {% endblock %}
 </body>
 </html>
