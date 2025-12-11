@@ -11,8 +11,14 @@
     {% block title %}Pantry Panic!{% endblock %}
     {% block content %}
     <nav class="top-nav">
-      <a href="{{ url_for('dashboard') }}">Dashboard</a>
-      <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
+        <nav class="top-nav">
+          <a href="{{ url_for('dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
+        </nav>
+
+          <a href="{{ url_for('leavegame', game_id=game_id) }}" class="leave-top-right">
+    <button type="button" class="leave-btn">Leave Game</button>
+</a>
     </nav>
     
     <div class="ingredientbox">
