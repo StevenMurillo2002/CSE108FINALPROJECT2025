@@ -223,20 +223,22 @@ def lobby(game_id):
 def joingamepost():
     game_id = request.form.get('game_id')
     # grab the room code from the user
+    if not game_id:
+        flash('Error: Invalid code, try again', 'alert')
+        return redirect(url_for('dashboard'))
+    
     return redirect(url_for('joingame', game_id = game_id))
 
 @app.route('/joingame/<int:game_id>')
 @login_required
 def joingame(game_id):
     game = Game.query.get(game_id)
-    # set the game equal to the game id 
-
-
+   
     if not game:
-        flash('Error: Game has not been found try again', 'alert')
+        flash('Error: Invalid code, try again', 'alert')
         return redirect(url_for('dashboard'))
     # check to see if the lobby for the game exists 
-
+    
     repeatplayer = PlayerGame.query.filter_by(game_id = game_id, user_id = current_user.id).first()
     if repeatplayer:
         flash("YOU ARE ALREADY IN THE GAME!!!!!!", 'alert')
