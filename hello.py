@@ -72,7 +72,7 @@ class Vote(db.Model):
     voter_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     response_id = db.Column(db.Integer, db.ForeignKey('responses.id'), nullable=False)
 
-    # optional relationships (nice for debugging / templates)
+ 
     voter = db.relationship("User", foreign_keys=[voter_id])
     response = db.relationship("Responses", foreign_keys=[response_id])
 
@@ -264,12 +264,12 @@ def leavegame(game_id):
         flash("Game not found.", "alert")
         return redirect(url_for('dashboard'))
 
-    # Remove this user from the game if they’re in it
+ 
     pg = PlayerGame.query.filter_by(game_id=game_id, user_id=current_user.id).first()
     if pg is not None:
         db.session.delete(pg)
 
-    # If THIS user is the host, delete the whole game & related data
+ 
     if current_user.id == game.host_id:
         rounds = GameRound.query.filter_by(game_id=game_id).all()
         round_ids = [r.id for r in rounds]
@@ -284,10 +284,9 @@ def leavegame(game_id):
         db.session.commit()
         return redirect(url_for('dashboard'))
 
-    # Non-host leaving
+
     remaining = PlayerGame.query.filter_by(game_id=game_id).count()
     if remaining == 0:
-        # No players left → clean up whole game
         rounds = GameRound.query.filter_by(game_id=game_id).all()
         for r in rounds:
             Responses.query.filter_by(round_id=r.id).delete()
@@ -304,11 +303,11 @@ def kickplayer(game_id, user_id):
     if not game:
         return redirect(url_for('dashboard'))
 
-    # Only the host is allowed to kick
+
     if current_user.id != game.host_id:
         return redirect(url_for('lobby', game_id=game_id))
 
-    # Don't allow host to kick themselves
+
     if user_id == game.host_id:
         return redirect(url_for('lobby', game_id=game_id))
 
@@ -351,22 +350,22 @@ def startgame(game_id):
 @app.route('/game/<int:game_id>/<int:round_id>')
 @login_required
 def actualgame(game_id, round_id):
-    # Make sure the game still exists
+
     game = Game.query.get(game_id)
     if not game:
         flash("This game no longer exists.", "warning")
         return redirect(url_for('dashboard'))
-    # Make sure this user is still in the game (not kicked / left)
+
     pg = PlayerGame.query.filter_by(game_id=game_id, user_id=current_user.id).first()
     if not pg:
         flash("You are no longer in this game.", "warning")
         return redirect(url_for('dashboard'))
-    # Get the round
+
     round_obj = GameRound.query.get_or_404(round_id)
     if round_obj.game_id != game_id:
         flash("Round does not belong to this game.", "alert")
         return redirect(url_for("dashboard"))
-    # Just pass the round; template already uses round.ingredients
+
     return render_template(
         'actualgame.html',
         game_id=game_id,
@@ -397,7 +396,7 @@ def votingwait(game_id, round_id):
         flash("No players found for this game.", "alert")
         return redirect(url_for("dashboard"))
 
-    # Everyone submitted → move to voting
+
     if len(responses) >= len(players):
         return redirect(url_for('voting', game_id=game_id, round_id=round_id))
 
@@ -419,7 +418,7 @@ def votingwait_votes(game_id, round_id):
         flash("No players found for this game.", "alert")
         return redirect(url_for("dashboard"))
 
-    # Everyone voted → end round
+ 
     if vote_count >= len(players):
         return redirect(url_for('endround', game_id=game_id, round_id=round_id))
 
@@ -436,7 +435,7 @@ def votingwait_votes(game_id, round_id):
 def continue_round(game_id, current_round_id):
     game = Game.query.get_or_404(game_id)
 
-    # If a newer round already exists, go there
+
     next_round = (
         GameRound.query
         .filter(GameRound.game_id == game_id, GameRound.id > current_round_id)
@@ -446,7 +445,7 @@ def continue_round(game_id, current_round_id):
     if next_round:
         return redirect(url_for('actualgame', game_id=game_id, round_id=next_round.id))
 
-    # Otherwise create it (only once in normal use)
+ 
     if game.round_num >= 3:
         return redirect(url_for('winner', game_id=game_id))
 
@@ -478,21 +477,20 @@ def voting(game_id, round_id):
 def addvote(game_id, round_id, response_id):
     resp = Responses.query.get_or_404(response_id)
 
-    # no self-voting (you already do this)
+
     if resp.user_id == current_user.id:
         flash("You cannot vote for your own answer!!", "alert")
         return redirect(url_for('voting', game_id=game_id, round_id=round_id))
 
-    # block duplicates (this is the new core)
     existing = Vote.query.filter_by(round_id=round_id, voter_id=current_user.id).first()
     if existing:
         flash("You already voted this round.", "alert")
         return redirect(url_for('votingwait_votes', game_id=game_id, round_id=round_id))
 
-    # record vote
+
     db.session.add(Vote(round_id=round_id, voter_id=current_user.id, response_id=response_id))
 
-    # update counters (optional but fine)
+
     resp.votes += 1
     scorer = PlayerGame.query.filter_by(game_id=game_id, user_id=resp.user_id).first()
     if scorer:
@@ -509,11 +507,11 @@ def addvote(game_id, round_id, response_id):
 def endround(game_id, round_id):
     game = Game.query.get_or_404(game_id)
 
-    # Final game winner
+
     if game.round_num >= 3:
         return redirect(url_for('winner', game_id=game_id))
 
-    # Otherwise show round results first
+
     return redirect(url_for('roundresults', game_id=game_id, round_id=round_id))
 
 @app.route('/roundresults/<int:game_id>/<int:round_id>')
