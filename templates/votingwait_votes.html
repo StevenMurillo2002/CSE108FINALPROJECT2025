@@ -1,43 +1,35 @@
 {% extends "base.html" %}
-
-{% block title %}Waiting{% endblock %}
+{% block title %}Waiting for votes{% endblock %}
 
 {% block content %}
 <nav class="top-nav">
-  <div class="welcome">
-    Game {{ game_id }} • Round {{ round_id }}
-  </div>
+  <div class="welcome">Game {{ game_id }} • Round {{ round_num }}</div>
   <a href="{{ url_for('dashboard') }}" class="logout-btn">Leave</a>
 </nav>
 
 <h1>Waiting…</h1>
 
 <div class="mainbox">
-
   <p style="font-size: 1.4rem; font-weight: 600;">
-    {{ responses|length }} / {{ players|length }} players submitted
+    {{ vote_count }} / {{ player_count }} votes submitted
   </p>
 
   <div class="join-pill" style="width: 60%; height: 22px;">
     <div
       style="
         height: 100%;
-        width: {{ (responses|length * 100) // (players|length if players|length else 1) }}%;
+        width: {{ (vote_count * 100) // (player_count if player_count else 1) }}%;
         background: #ff5c5c;
         border-radius: 999px;
       "
     ></div>
   </div>
 
-  <div style="margin-top: 1.5rem; width: 60%;">
-    {% for r in responses %}
-      <div class="join-pill" style="margin-bottom: 0.6rem;">
-        {{ r.round.username }} submitted
-      </div>
-    {% endfor %}
-  </div>
-
+  <p style="opacity: 0.75; margin-top: 1rem;">
+    This page will advance once everyone votes.
+  </p>
 </div>
+
 <script>
   // simple polling; swap for websockets later
   setTimeout(() => location.reload(), 1200);

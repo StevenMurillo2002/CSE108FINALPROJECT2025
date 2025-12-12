@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Round Results{% endblock %}
+
+{% block content %}
+<nav class="top-nav">
+  <div class="welcome">Game {{ game_id }} • Results (Round {{ round_num }})</div>
+  <a href="{{ url_for('dashboard') }}" class="logout-btn">Leave</a>
+</nav>
+
+<h1>Round Results</h1>
+
+<div class="mainbox">
+
+  <h2 style="margin-top: 0;">Scoreboard</h2>
+
+  <div style="width: 70%;">
+    {% for p in players %}
+      <div class="join-pill" style="justify-content: space-between; padding: 0.6rem 0.8rem;">
+        <span style="font-size: 1.2rem; font-weight: 600;">
+          Player {{ p.user_id }}
+        </span>
+        <span style="font-size: 1.2rem; font-weight: 700;">
+          {{ p.score }} pts
+        </span>
+      </div>
+    {% endfor %}
+  </div>
+
+  <form action="{{ url_for('continue_round', game_id=game_id, current_round_id=round_id) }}" method="GET">
+  <button type="submit">Continue</button>
+  </form>
+
+  <p style="opacity: 0.7; margin-top: 0.75rem;">
+    If both players are here, hit Continue to start the next round.
+  </p>
+
+</div>
+{% endblock %}

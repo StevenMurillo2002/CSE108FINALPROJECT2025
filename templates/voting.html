@@ -1,23 +1,47 @@
 {% extends "base.html" %}
 
+{% block title %}Voting{% endblock %}
+
 {% block content %}
-<h1>Vote for Your Favorite Dish</h1>
+<nav class="top-nav">
+  <div class="welcome">
+    Game {{ game_id }} • Round {{ round_num }}
+  </div>
+  <a href="{{ url_for('dashboard') }}" class="logout-btn">Leave</a>
+</nav>
 
-<p>Game ID: {{ game_id }} | Round {{ round_id }}</p>
+<h1>Vote</h1>
 
-<ul>
-    {% for r in responses %}
-    <li>
-        {{ r.text }} — Votes: {{ r.votes }}
+<div class="mainbox">
 
-        {% if r.user_id != current_user.id %}
-        <form action="{{url_for('addvote', game_id = game_id, round_id = round_id, response_id = r.id)}}" method="POST">
-            <button type="submit">Vote</button>
+  {% for r in responses %}
+    <div class="join-pill" style="padding: 0.6rem 0.8rem; width: 70%; justify-content: space-between;">
+      
+      <div style="font-size: 1.2rem; font-weight: 600;">
+        {{ r.text }}
+        <span style="opacity: 0.6; margin-left: 0.5rem;">
+          ({{ r.votes }} votes)
+        </span>
+      </div>
+
+      {% if r.user_id != current_user.id %}
+        <form
+          action="{{ url_for('addvote',
+            game_id=game_id,
+            round_id=round_id,
+            response_id=r.id) }}"
+          method="POST"
+        >
+          <button type="submit">Vote</button>
         </form>
-    </li>
-    {% endfor %}
-</ul>
+      {% else %}
+        <button disabled style="opacity: 0.5; cursor: not-allowed;">
+          Yours
+        </button>
+      {% endif %}
 
+    </div>
+  {% endfor %}
 
-<a href="{{ url_for('dashboard') }}">Return to Dashboard</a>
+</div>
 {% endblock %}

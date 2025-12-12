@@ -9,11 +9,11 @@
     <h1>Winner! {{winner.username}}</h1>
     <h2>Scoreboard: </h2>
     <ul>
-        {{% for p in players}}
+        {% for p in players%}
         <li>
-            {{p.user.username}} - {{p.score}} points
+            {{p.username}} - {{p.score}} points
         </li>
-        {{% endfor %}}
+        {% endfor %}
     </ul>
 
     <a href="{{url_for('dashboard')}}">Return to dashboard</a>
