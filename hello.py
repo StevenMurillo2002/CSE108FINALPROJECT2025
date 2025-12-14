@@ -188,15 +188,15 @@ def creategame():
 @app.route('/gamelobby/<int:game_id>')
 @login_required
 def lobby(game_id):
-    # 1) Make sure the game still exists
+
     game = Game.query.get(game_id)
     if not game:
         return redirect(url_for('dashboard'))
-    # 2) Make sure THIS user still belongs to this game (not kicked)
+
     pg = PlayerGame.query.filter_by(game_id=game_id, user_id=current_user.id).first()
     if not pg:
         return redirect(url_for('dashboard'))
-    # 3) If a round has already started, send everyone to the game screen
+
     round_started = GameRound.query.filter_by(game_id=game_id).first()
     if round_started:
         return redirect(url_for(
@@ -204,7 +204,7 @@ def lobby(game_id):
             game_id=game_id,
             round_id=round_started.id
         ))
-    # 4) Otherwise, still in lobby – show players list
+
     allplayers = (
         User.query
             .join(PlayerGame, PlayerGame.user_id == User.id)
@@ -518,7 +518,7 @@ def endround(game_id, round_id):
 @login_required
 def roundresults(game_id, round_id):
     game = Game.query.get_or_404(game_id)
-    players = PlayerGame.query.filter_by(game_id=game_id).all()
+    players = PlayerGame.query.filter_by(game_id = game_id).order_by(PlayerGame.score.desc()).all()
 
     return render_template(
         "roundresults.html",
@@ -532,7 +532,7 @@ def roundresults(game_id, round_id):
 @app.route('/winner/<int:game_id>')
 @login_required
 def winner(game_id):
-    players = PlayerGame.query.filter_by(game_id = game_id).all()
+    players = PlayerGame.query.filter_by(game_id = game_id).order_by(PlayerGame.score.desc()).all()
 
     if not players:
         return redirect(url_for('dashboard'))
@@ -561,7 +561,7 @@ def waitround(game_id):
 
 
     
-    return redirect(url_for('actualgame', game_id = game_id, round_id = currentround.id))
+
     
 if __name__ == '__main__':
     app.run(debug=True)
