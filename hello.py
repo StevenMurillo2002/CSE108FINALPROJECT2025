@@ -49,6 +49,7 @@ class PlayerGame(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     score = db.Column(db.Integer, default=0)
+    user = db.relationship("User")
 
 class GameRound(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -433,7 +434,8 @@ def votingwait_votes(game_id, round_id):
         game_id=game_id,
         round_id=round_id,
         vote_count=vote_count,
-        player_count=len(players)
+        player_count=len(players),
+        players = players
     )
 
 @app.route('/continue/<int:game_id>/<int:current_round_id>')
@@ -531,7 +533,7 @@ def roundresults(game_id, round_id):
         game_id=game_id,
         round_id=round_id,
         players=players,
-        round_num=game.round_num
+        round_num=game.round_num,
     )
 
 

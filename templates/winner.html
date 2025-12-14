@@ -11,7 +11,7 @@
     <ul>
         {% for p in players%}
         <li>
-            {{p.username}} - {{p.score}} points
+            {{p.user.display_name}} - {{p.score}} points
         </li>
         {% endfor %}
     </ul>
