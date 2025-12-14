@@ -43,6 +43,26 @@ with app.app_context():
     db.session.add(Potato)
     db.session.commit()
 
+    Beans = Ingredients(name = "Beans", category = "Vegetables")
+    db.session.add(Beans)
+    db.session.commit()
+
+    Broccoli = Ingredients(name = "Broccoli", category = "Vegetables")
+    db.session.add(Broccoli)
+    db.session.commit()
+
+    Eggplant = Ingredients(name = "Eggplant", category = "Vegetables")
+    db.session.add(Eggplant)
+    db.session.commit()
+
+
+    Corn = Ingredients(name = "Corn", category = "Vegetables")
+    db.session.add(Corn)
+    db.session.commit()
+
+    Yams = Ingredients(name = "Yams", category = "Vegetables")
+    db.session.add(Yams)
+    db.session.commit()
 
     #  Meats
     Beef = Ingredients(name = "Beef", category = "Meats")
@@ -73,6 +93,16 @@ with app.app_context():
     db.session.add(Lamb)
     db.session.commit()
 
+    Tuna = Ingredients(name = "Tuna", category = "Meats")
+    db.session.add(Tuna)
+    db.session.commit()
+
+    Samon = Ingredients(name = "Samon", category = "Meats")
+    db.session.add(Samon)
+    db.session.commit()
+
+
+    
 
     # Extra stuff idk lol
 
