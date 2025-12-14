@@ -17,7 +17,7 @@
     {% for p in players %}
       <div class="join-pill" style="justify-content: space-between; padding: 0.6rem 0.8rem;">
         <span style="font-size: 1.2rem; font-weight: 600;">
-          Player {{ p.user_id }}
+          {{ p.user.display_name }}
         </span>
         
         <span style="font-size: 1.2rem; font-weight: 700;">

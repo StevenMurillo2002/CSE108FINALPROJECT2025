@@ -49,6 +49,7 @@ class PlayerGame(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('game.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     score = db.Column(db.Integer, default=0)
+    user = db.relationship("User")
 
 class GameRound(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,6 +65,10 @@ class Responses(db.Model):
     text = db.Column(db.String(256))
     votes = db.Column(db.Integer, default=0)
     user = db.relationship("User")
+
+    __table_args__ = (
+        db.UniqueConstraint('round_id', 'text', name='uniq_response_per_round'),
+    )
 
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -385,6 +390,13 @@ def submitanswer(game_id, round_id):
         flash("Invalid answer, please try again!", "alert")
         return redirect(url_for('actualgame', game_id = game_id, round_id = round_id))
     
+    answer_norm = " ".join(answer.strip().lower().split())
+    existing = Responses.query.filter_by(round_id=round_id, text=answer_norm).first()
+
+    if existing:
+        flash("This answer has already been submitted, please try again!", "alert")
+        return redirect(url_for('actualgame', game_id = game_id, round_id = round_id))
+    
     new_answers = Responses(round_id = round_id, user_id = current_user.id, text = answer, votes = 0)
     db.session.add(new_answers)
     db.session.commit()     
@@ -433,7 +445,8 @@ def votingwait_votes(game_id, round_id):
         game_id=game_id,
         round_id=round_id,
         vote_count=vote_count,
-        player_count=len(players)
+        player_count=len(players),
+        players = players
     )
 
 @app.route('/continue/<int:game_id>/<int:current_round_id>')
@@ -531,7 +544,7 @@ def roundresults(game_id, round_id):
         game_id=game_id,
         round_id=round_id,
         players=players,
-        round_num=game.round_num
+        round_num=game.round_num,
     )
 
 
