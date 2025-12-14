@@ -66,6 +66,10 @@ class Responses(db.Model):
     votes = db.Column(db.Integer, default=0)
     user = db.relationship("User")
 
+    __table_args__ = (
+        db.UniqueConstraint('round_id', 'text', name='uniq_response_per_round'),
+    )
+
 class Vote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -384,6 +388,13 @@ def submitanswer(game_id, round_id):
 
     if not answer:
         flash("Invalid answer, please try again!", "alert")
+        return redirect(url_for('actualgame', game_id = game_id, round_id = round_id))
+    
+    answer_norm = " ".join(answer.strip().lower().split())
+    existing = Responses.query.filter_by(round_id=round_id, text=answer_norm).first()
+
+    if existing:
+        flash("This answer has already been submitted, please try again!", "alert")
         return redirect(url_for('actualgame', game_id = game_id, round_id = round_id))
     
     new_answers = Responses(round_id = round_id, user_id = current_user.id, text = answer, votes = 0)
