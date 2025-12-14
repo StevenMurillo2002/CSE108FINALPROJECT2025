@@ -5,6 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
 from sqlalchemy import select, and_
 
+import string, random
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
@@ -43,6 +45,7 @@ class Game(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     round_num = db.Column(db.Integer, default=1)
     active = db.Column(db.Boolean, default=True)
+    code = db.Column(db.String(8), unique=True, nullable=False)
 
 class PlayerGame(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -85,6 +88,13 @@ class Vote(db.Model):
         db.UniqueConstraint('round_id', 'voter_id', name='uniq_vote_per_round'),
     )
 
+# generate random game codes
+def generate_code(length=6):
+    chars = string.ascii_uppercase + string.digits
+    while True:
+        code = ''.join(random.choice(chars) for _ in range(length))
+        if not Game.query.filter_by(code=code).first():
+            return code
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -173,9 +183,8 @@ def dashboard():
 
 @app.route('/creategame')
 @login_required
-
 def creategame():
-    newgame = Game(host_id = current_user.id, round_num = 1, active = True)
+    newgame = Game(host_id = current_user.id, round_num = 1, active = True, code = generate_code())
     # create a new game with the host being the current user who just clicked create game
     db.session.add(newgame)
     db.session.commit()
@@ -187,8 +196,6 @@ def creategame():
 
     return redirect(url_for('lobby', game_id = newgame.id))
     # put user into the lobby until the user is ready to start the game
-
-
 
 @app.route('/gamelobby/<int:game_id>')
 @login_required
@@ -219,6 +226,7 @@ def lobby(game_id):
     return render_template(
         'gamelobby.html',
         game_id=game_id,
+        game_code=game.code,
         allplayers=allplayers,
         host_id=game.host_id
     )
@@ -226,13 +234,18 @@ def lobby(game_id):
 @app.route('/joingame', methods=['POST'])
 @login_required
 def joingamepost():
-    game_id = request.form.get('game_id')
+    game_code = request.form.get('game_code')
     # grab the room code from the user
-    if not game_id:
+    if not game_code:
         flash('Error: Invalid code, try again', 'alert')
         return redirect(url_for('dashboard'))
     
-    return redirect(url_for('joingame', game_id = game_id))
+    game = Game.query.filter_by(code=game_code.upper()).first()
+    if not game:
+        flash('Error: Invalid code, try again', 'alert')
+        return redirect(url_for('dashboard'))
+    
+    return redirect(url_for('joingame', game_id = game.id))
 
 @app.route('/joingame/<int:game_id>')
 @login_required
