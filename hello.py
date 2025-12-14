@@ -381,6 +381,10 @@ def actualgame(game_id, round_id):
 def submitanswer(game_id, round_id):
     answer = request.form.get('answer')
 
+    if not answer:
+        flash("Invalid answer, please try again!", "alert")
+        return redirect(url_for('actualgame', game_id = game_id, round_id = round_id))
+    
     new_answers = Responses(round_id = round_id, user_id = current_user.id, text = answer, votes = 0)
     db.session.add(new_answers)
     db.session.commit()     
