@@ -77,30 +77,3 @@ body{
     flex-direction: column;
     margin-bottom: 0.75rem;
 }
-
-.falling-bg {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;    /* don’t block clicks */
-    overflow: hidden;
-    z-index: -1;             /* behind game UI */
-  }
-  
-  .ingredient {
-    position: absolute;
-    top: -10vh;
-    font-size: 2rem;         /* or use background-image instead */
-    animation: fall 8s linear infinite;
-  }
-  
-  /* vary horizontal position & timing with nth-child */
-  .ingredient:nth-child(1) { left: 10%; animation-delay: 0s;  }
-  .ingredient:nth-child(2) { left: 40%; animation-delay: 2s;  }
-  .ingredient:nth-child(3) { left: 70%; animation-delay: 4s;  }
-  
-  @keyframes fall {
-    from { transform: translateY(-10vh); opacity: 0.9; }
-    to   { transform: translateY(110vh); opacity: 0;   }
-  }
-  
-

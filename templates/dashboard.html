@@ -9,6 +9,15 @@
 <body>
     {% extends "base.html" %}
     {% block title %}Dashboard{% endblock %}
+
+    {% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    {% endblock %}
+
+    {% block falling_bg %}
+    <div class="falling-bg" id="falling-bg"></div>
+    {% endblock %}
+
     {% block content %}
 
     <nav class="top-nav">
@@ -68,6 +77,49 @@
         });
     </script>
 
+    {% endblock %}
+
+    {% block extra_js %}
+    <script>
+        const container = document.getElementById('falling-bg');
+        const ingredients = [
+                '🍎','🍏','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🍈','🍒','🍑','🫐','🍍','🥭','🥥','🥝','🍅',
+                '🥦','🥬','🥒','🌶️','🫑','🌽','🥕','🫒','🧄','🧅','🥔','🍠','🍆','🥑','🌱','🍄','🫘',
+                '🍗','🥩','🍖','🐟','🦪','🦐','🦑','🥚','🐔',
+                '🧀','🧈','🧂','🥛',
+                '🍞','🥖','🥐','🥨','🍚','🍙','🍘','🥙','🥮','🍝','🍜','🍛','🥟',
+                '🍯','🍫','🍬','🥧','🧁','🍩','🍪','🥜','🌰'
+                ];
+        const MAX_INGREDIENTS = 25;
+
+        function spawnIngredient() {
+            if (!container) return;
+            if (container.children.length >= MAX_INGREDIENTS) return;
+
+            const el = document.createElement('div');
+            el.classList.add('ingredient');
+            el.textContent = ingredients[Math.floor(Math.random() * ingredients.length)]; 
+            el.style.left = Math.random() * 100 + 'vw'; // hori position
+            const size = 1.4 + Math.random() * 10.6; // random size 1.2 - 3 rem
+            el.style.fontSize = size + 'rem';
+            const duration = 6 + Math.random() * 4; // random fall duration 6-10 sec
+            el.style.animationDuration = duration + 's';
+            el.style.animationDelay = '0s';
+
+            container.appendChild(el);
+            setTimeout(() => el.remove(), (duration + 1) * 1000);   // cleanup
+        }
+
+        // spawn every 400 - 900 ms
+        function loop() {
+            spawnIngredient();
+            const next = 400 + Math.random() * 500;
+            setTimeout(loop, next);
+        }
+
+        loop();
+        
+    </script>
     {% endblock %}
 </body>
 </html>

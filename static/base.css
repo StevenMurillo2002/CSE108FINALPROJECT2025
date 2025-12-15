@@ -1,0 +1,48 @@
+.flashes { 
+    list-style: none; padding: 0; 
+}
+
+.flashes li { 
+    margin: 0.5em 0; 
+    padding: 0.8em 1.2em; 
+    border-radius: 5px; 
+}
+
+.success { 
+    background: #d4f9d4; 
+    color: #228b22; 
+}
+
+.warning { 
+    background: #fff4e5; 
+    color: #884700; 
+}
+
+.alert  { 
+    background: #fee2e2; 
+    color: #a70000; 
+}
+
+.falling-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;    
+    overflow: hidden;
+    z-index: -1;             
+  }
+  
+  .ingredient {
+    position: absolute;
+    top: -40vh;
+    font-size: 2rem;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+  }
+
+  @keyframes fall {
+    from { transform: translateY(-10vh); opacity: 0.9; }
+    to   { transform: translateY(110vh); opacity: 0;   }
+  }
+  
+
