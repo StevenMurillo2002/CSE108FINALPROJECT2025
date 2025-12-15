@@ -2,6 +2,9 @@
 {% block title %}Round Results{% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="/static/roundresults.css">
+
 <nav class="top-nav">
   <div class="welcome">Game {{ game_id }} • Results (Round {{ round_num }})</div>
   <a href="{{ url_for('dashboard') }}" class="logout-btn">Leave</a>
@@ -13,14 +16,14 @@
 
   <h2 style="margin-top: 0;">Scoreboard</h2>
 
-  <div style="width: 70%;">
+  <div class="scoreboard">
     {% for p in players %}
-      <div class="join-pill" style="justify-content: space-between; padding: 0.6rem 0.8rem;">
-        <span style="font-size: 1.2rem; font-weight: 600;">
+      <div class="join-pill" style="text-align:center; padding: 0.6rem 0.8rem;">
+        <span style="font-size: 1.2rem; font-weight: 600;" class="displayname">
           {{ p.user.display_name }}
         </span>
         
-        <span style="font-size: 1.2rem; font-weight: 700;">
+        <span style="font-size: 1.2rem; font-weight: 700;" class="score">
           {{ p.score }} pts
         </span>
       </div>

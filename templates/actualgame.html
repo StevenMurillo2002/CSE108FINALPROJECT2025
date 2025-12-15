@@ -23,11 +23,10 @@
     
     <div class="ingredientbox">
       <h1>Ingredient List: </h1>
-    </div>
-
-    <div class="ingredientlist">
       <p> {{round.ingredients}}</p>
     </div>
+
+   
 
     <div class="answerbox">
       <form action="{{url_for('submitanswer', game_id = game_id, round_id = round.id)}}" method="POST">
