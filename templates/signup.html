@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <title>Sign Up 🍅🥦🧀</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='signup.css') }}">
 </head>
 <body>
     {% extends "base.html" %}
@@ -14,17 +14,30 @@
     <div class="login-container">
         <h1>Sign Up 🍅🥦🧀</h1>
 
+        <div class="falling-bg">
+            <div class="ingredient">🍅</div>
+            <div class="ingredient">🥦</div>
+            <div class="ingredient">🧀</div>
+        </div>
+        
+        
         <form method="POST">
-            <label>Name</label>
-            <input type="text" name="display_name" placeholder="Display name" required>
+            <div class="form-row">
+                <label>Name</label>
+                <input type="text" name="display_name" placeholder="Display name" required>
+            </div>
 
-            <label>Username</label>
-            <input type="text" name="username" required />
+            <div class="form-row">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
 
-            <label>Password</label>
-            <input type="password" name="password" required />
+            <div class="form-row">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
 
-            <button type="submit">Create Account</button>
+            <button type="submit" class='create-account'>Create Account</button>
         </form>
 
         <p>Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>

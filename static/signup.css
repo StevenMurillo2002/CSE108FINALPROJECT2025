@@ -1,0 +1,106 @@
+h1{
+    justify-self: center;
+    margin-top: 5%;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+body{
+    margin:0;
+    padding: 0;
+    background-color: rgb(240, 216, 181);
+}
+
+.flashes { 
+    list-style: none; padding: 0; 
+}
+
+.flashes li { 
+    margin: 0.5em 0; 
+    padding: 0.8em 1.2em; 
+    border-radius: 5px; 
+}
+
+.success { 
+    background: #d4f9d4; 
+    color: #228b22; 
+}
+
+.warning { 
+    background: #fff4e5; 
+    color: #884700; 
+}
+
+.alert  { 
+    background: #fee2e2; 
+    color: #a70000; 
+}
+
+.create-account{
+    align-self: center;
+    margin-top: 0.75rem;
+    padding: 0.5rem 1.5rem;
+    width: auto;
+    height: auto;
+    background-color: #ff914d;
+    border: 2px solid black;
+    border-radius: 3rem;
+    font-weight: bold;
+
+}
+
+.form-row{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.form-row label{
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+}
+
+.form-row input {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+}
+
+.login-container{
+    max-width: 420px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.login-container form {
+    width: 300px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.75rem;
+}
+
+.falling-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;    /* don’t block clicks */
+    overflow: hidden;
+    z-index: -1;             /* behind game UI */
+  }
+  
+  .ingredient {
+    position: absolute;
+    top: -10vh;
+    font-size: 2rem;         /* or use background-image instead */
+    animation: fall 8s linear infinite;
+  }
+  
+  /* vary horizontal position & timing with nth-child */
+  .ingredient:nth-child(1) { left: 10%; animation-delay: 0s;  }
+  .ingredient:nth-child(2) { left: 40%; animation-delay: 2s;  }
+  .ingredient:nth-child(3) { left: 70%; animation-delay: 4s;  }
+  
+  @keyframes fall {
+    from { transform: translateY(-10vh); opacity: 0.9; }
+    to   { transform: translateY(110vh); opacity: 0;   }
+  }
+  
+
