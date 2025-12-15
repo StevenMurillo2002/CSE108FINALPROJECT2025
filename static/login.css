@@ -31,6 +31,10 @@ body{
 
 }
 
+.container a{
+    color: #a70000;
+}
+
 .login-text{
     font-size: 20px;    
     color:white;
@@ -47,6 +51,11 @@ body{
 }
 
 .login-detail{
+    color: white;
+    font-size: 20px;
+}
+
+.signup-detail{
     color: white;
     font-size: 20px;
 }
