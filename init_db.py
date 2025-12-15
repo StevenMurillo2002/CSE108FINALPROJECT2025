@@ -97,7 +97,7 @@ with app.app_context():
     db.session.add(Tuna)
     db.session.commit()
 
-    Samon = Ingredients(name = "Samon", category = "Meats")
+    Samon = Ingredients(name = "Salmon", category = "Meats")
     db.session.add(Samon)
     db.session.commit()
 
