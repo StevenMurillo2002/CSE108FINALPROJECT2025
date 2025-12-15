@@ -1,0 +1,40 @@
+body{
+    margin:0;
+    padding: 0;
+    background-color: rgb(240, 216, 181);
+    text-align: center;
+}
+
+
+h1{
+    display: inline-block;
+    color: white;
+    text-align: center;
+    background: #ff914d;
+    border-radius: 999px;
+    padding: 0.5rem 1.4rem;
+    border: none;
+    font-weight: 600;
+
+}
+
+a{
+    color: white;
+    text-align: center;
+    background: #ff914d;
+    border-radius: 999px;
+    padding: 0.5rem 1.4rem;
+    border: none;
+    font-weight: 600;
+}
+
+ul{
+    font-size: 20px;
+    margin-top: 0.3rem auto;
+    padding: 0.5rem 1.4rem;
+    border-radius: 999px;
+    border: none;
+    background: #ff5c5c;
+    color: #fff;
+    font-weight: 600;
+}
