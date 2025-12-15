@@ -4,3 +4,26 @@ body{
     background-color: rgb(240, 216, 181);
     text-align: center;
 }
+
+
+h1{
+    display: inline-block;
+    color: white;
+    text-align: center;
+    background: #ff914d;
+    border-radius: 999px;
+    padding: 0.5rem 1.4rem;
+    border: none;
+    font-weight: 600;
+
+}
+
+a{
+    color: white;
+    text-align: center;
+    background: #ff914d;
+    border-radius: 999px;
+    padding: 0.5rem 1.4rem;
+    border: none;
+    font-weight: 600;
+}
